@@ -78,7 +78,13 @@ class Context {
       .whereIn('stories.id', keys)
       .groupBy('stories.id')
       .select('stories.id', db.raw('count(comments.story_id)'))
-      .then(mapToValues(keys, x => x.id, x => x.count)),
+      .then(
+        mapToValues(
+          keys,
+          x => x.id,
+          x => x.count,
+        ),
+      ),
   );
 
   storyPointsCount = new DataLoader(keys =>
@@ -88,7 +94,13 @@ class Context {
       .whereIn('stories.id', keys)
       .groupBy('stories.id')
       .select('stories.id', db.raw('count(story_points.story_id)'))
-      .then(mapToValues(keys, x => x.id, x => x.count)),
+      .then(
+        mapToValues(
+          keys,
+          x => x.id,
+          x => x.count,
+        ),
+      ),
   );
 
   commentById = new DataLoader(keys =>
@@ -122,7 +134,13 @@ class Context {
       .whereIn('comments.id', keys)
       .groupBy('comments.id')
       .select('comments.id', db.raw('count(comment_points.comment_id)'))
-      .then(mapToValues(keys, x => x.id, x => x.count)),
+      .then(
+        mapToValues(
+          keys,
+          x => x.id,
+          x => x.count,
+        ),
+      ),
   );
 
   /*

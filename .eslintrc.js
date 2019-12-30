@@ -16,6 +16,7 @@ module.exports = {
   extends: ['airbnb-base', 'prettier'],
   plugins: ['flowtype', 'prettier'],
   rules: {
+    'linebreak-style': 0,
     'prettier/prettier': ['error', prettierOptions],
     'flowtype/define-flow-type': 1,
   },

@@ -1,7 +1,6 @@
 version: '3'
 
 services:
-
   # Data API and authentication/authorization
   api:
     image: api
@@ -26,12 +25,13 @@ services:
       - TWITTER_KEY=xxxxx
       - TWITTER_SECRET=xxxxx
     ports:
-      - "8080:8080"
-      - "127.0.0.1:9229:9229" # V8 inspector for tools/run.js
-      - "127.0.0.1:9230:9230" # V8 inspector for src/server.js
+      - '8080:8080'
+      - '127.0.0.1:9229:9229' # V8 inspector for tools/run.js
+      - '127.0.0.1:9230:9230' # V8 inspector for src/server.js
     volumes:
       - yarn:/home/node/.cache/yarn
       - ./build:/usr/src/app/build
+      - ./credential:/usr/src/app/credential
       - ./locales:/usr/src/app/locales
       - ./migrations:/usr/src/app/migrations
       - ./seeds:/usr/src/app/seeds
@@ -56,7 +56,7 @@ services:
       - db:/var/lib/postgresql/data
       - ./postgres-initdb.sh:/docker-entrypoint-initdb.d/initdb.sh
     ports:
-      - "127.0.0.1:5432:5432" # you can override it via docker-compose.override.yml
+      - '127.0.0.1:5432:5432' # you can override it via docker-compose.override.yml
 
   # Distributed in-memory cache
   redis:

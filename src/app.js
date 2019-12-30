@@ -27,11 +27,14 @@ import { printSchema } from 'graphql';
 
 import email from './email';
 import redis from './redis';
-import passport from './passport';
-import accountRoutes from './routes/account';
+// import passport from './passport';
+// import accountRoutes from './routes/account';
+import accountRoutes from './routes/basic-account';
 import schema from './schema';
 import Context from './Context';
 import errors from './errors';
+import jwtAuth from './middleware/jwt-auth';
+import authGuard from './middleware/auth.guard';
 
 i18next
   .use(LanguageDetector)
@@ -82,8 +85,9 @@ app.use(
   }),
 );
 app.use(i18nextMiddleware.handle(i18next));
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
+app.use(jwtAuth); // replace with any authentication method
 app.use(flash());
 
 app.use(accountRoutes);
@@ -122,6 +126,8 @@ app.get('/graphql/schema', (req, res) => {
 
 app.use(
   '/graphql',
+
+  authGuard,
   expressGraphQL(req => ({
     schema,
     context: new Context(req),
