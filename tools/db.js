@@ -5,7 +5,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE.txt file in the root directory of this source tree.
  */
-
+require('dotenv').config();
 const fs = require('fs');
 const knex = require('knex');
 const task = require('./task');
@@ -15,13 +15,16 @@ const commands = ['version', 'migrate', 'rollback', 'migration', 'seed'];
 const command = process.argv[2];
 
 const config = {
-  client: 'pg',
-  connection: process.env.DATABASE_URL,
-  migrations: {
-    tableName: 'migrations',
+  client: 'mysql',
+  connection: {
+    host: process.env.MYSQL_HOST,
+    port: process.env.MYSQL_PORT,
+    user: process.env.MYSQL_USERNAME,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE,
   },
 };
-
+console.log(config);
 // The template for database migration files (see templates/*.js)
 const version = new Date()
   .toISOString()

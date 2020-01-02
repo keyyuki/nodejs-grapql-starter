@@ -14,7 +14,7 @@ module.exports.up = async db => {
     // UUID v1mc reduces the negative side effect of using random primary keys
     // with respect to keyspace fragmentation on disk for the tables because it's time based
     // https://www.postgresql.org/docs/current/static/uuid-ossp.html
-    table.uuid('id').notNullable().defaultTo(db.raw('uuid_generate_v1mc()')).primary();
+    table.increments('id').notNullable().primary();
     table.string('display_name', 100);
     table.string('image_url', 200);
     table.string('password_hash', 128);
@@ -23,8 +23,8 @@ module.exports.up = async db => {
 
   // Users' email addresses
   await db.schema.createTable('emails', table => {
-    table.uuid('id').notNullable().defaultTo(db.raw('uuid_generate_v1mc()')).primary();
-    table.uuid('user_id').notNullable().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE');
+    table.increments('id').notNullable().primary();
+    table.integer('user_id').unsigned().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE');
     table.string('email', 100).notNullable();
     table.boolean('verified').notNullable().defaultTo(false);
     table.boolean('primary').notNullable().defaultTo(false);
@@ -34,19 +34,19 @@ module.exports.up = async db => {
 
   // External logins with security tokens (e.g. Google, Facebook, Twitter)
   await db.schema.createTable('logins', table => {
-    table.uuid('user_id').notNullable().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE');
+    table.integer('user_id').unsigned().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE');
     table.string('provider', 16).notNullable();
     table.string('id', 36).notNullable();
     table.string('username', 100);
-    table.jsonb('tokens').notNullable();
-    table.jsonb('profile').notNullable();
+    table.json('tokens').notNullable();
+    table.json('profile').notNullable();
     table.timestamps(false, true);
     table.primary(['provider', 'id']);
   });
 
   await db.schema.createTable('stories', table => {
-    table.uuid('id').notNullable().defaultTo(db.raw('uuid_generate_v1mc()')).primary();
-    table.uuid('author_id').notNullable().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE');
+    table.increments('id').notNullable().primary();
+    table.integer('author_id').unsigned().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE');
     table.string('title', 80).notNullable();
     table.string('url', 200);
     table.text('text');
@@ -54,23 +54,23 @@ module.exports.up = async db => {
   });
 
   await db.schema.createTable('story_points', table => {
-    table.uuid('story_id').references('id').inTable('stories').onDelete('CASCADE').onUpdate('CASCADE');
-    table.uuid('user_id').notNullable().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE');
+    table.integer('story_id').unsigned().references('id').inTable('stories').onDelete('CASCADE').onUpdate('CASCADE');
+    table.integer('user_id').unsigned().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE');
     table.primary(['story_id', 'user_id']);
   });
 
   await db.schema.createTable('comments', table => {
-    table.uuid('id').notNullable().defaultTo(db.raw('uuid_generate_v1mc()')).primary();
-    table.uuid('story_id').notNullable().references('id').inTable('stories').onDelete('CASCADE').onUpdate('CASCADE');
-    table.uuid('parent_id').references('id').inTable('comments').onDelete('CASCADE').onUpdate('CASCADE');
-    table.uuid('author_id').notNullable().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE');
+    table.increments('id').notNullable().primary();
+    table.integer('story_id').unsigned().references('id').inTable('stories').onDelete('CASCADE').onUpdate('CASCADE');
+    table.integer('parent_id').unsigned().references('id').inTable('comments').onDelete('CASCADE').onUpdate('CASCADE');
+    table.integer('author_id').unsigned().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE');
     table.text('text');
     table.timestamps(false, true);
   });
 
   await db.schema.createTable('comment_points', table => {
-    table.uuid('comment_id').references('id').inTable('comments').onDelete('CASCADE').onUpdate('CASCADE');
-    table.uuid('user_id').notNullable().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE');
+    table.integer('comment_id').unsigned().references('id').inTable('comments').onDelete('CASCADE').onUpdate('CASCADE');
+    table.integer('user_id').unsigned().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE');
     table.primary(['comment_id', 'user_id']);
   });
 };

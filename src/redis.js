@@ -13,6 +13,7 @@ import errors from './errors';
 
 bluebird.promisifyAll(redis.RedisClient.prototype);
 bluebird.promisifyAll(redis.Multi.prototype);
+console.log('=======process.env.REDIS_URL=========', process.env.REDIS_URL);
 
 const client = redis.createClient(process.env.REDIS_URL);
 

@@ -9,14 +9,12 @@ services:
       args:
         NODE_ENV: development
     hostname: api
-    depends_on:
-      - db
-      - redis
+
     environment:
       - CORS_ORIGIN=http://localhost:3000,http://localhost:3001
-      - DATABASE_URL=postgres://postgres@db:5432/dev
-      - DATABASE_DEBUG=false
-      - REDIS_URL=redis://redis:6379/0
+      #      - DATABASE_URL=postgres://postgres@db:5432/dev
+      #      - DATABASE_DEBUG=false
+      - REDIS_URL=redis://172.19.0.1:6379/0
       - SESSION_SECRET=wZjwhFtzQsd7r87W6AZw45Sm
       - FACEBOOK_ID=1821424564802638
       - FACEBOOK_SECRET=2339bdf25f236a42fc3a18280bf455e8
@@ -25,7 +23,7 @@ services:
       - TWITTER_KEY=xxxxx
       - TWITTER_SECRET=xxxxx
     ports:
-      - '8080:8080'
+      - '3003:8080'
       - '127.0.0.1:9229:9229' # V8 inspector for tools/run.js
       - '127.0.0.1:9230:9230' # V8 inspector for src/server.js
     volumes:
@@ -43,30 +41,10 @@ services:
       - ./.prettierrc:/usr/src/app/.prettierrc
       - ./package.json:/usr/src/app/package.json
       - ./yarn.lock:/usr/src/app/yarn.lock
-    command: node tools/run.js # or, `node --inspect=0.0.0.0:9229 tools/run.js`
+      - ./.env:/usr/src/app/.env
 
-  # SQL and document data store
-  db:
-    image: postgres:9.6.6-alpine
-    read_only: true
-    tmpfs:
-      - /tmp
-      - /var/run/postgresql
-    volumes:
-      - db:/var/lib/postgresql/data
-      - ./postgres-initdb.sh:/docker-entrypoint-initdb.d/initdb.sh
-    ports:
-      - '127.0.0.1:5432:5432' # you can override it via docker-compose.override.yml
-
-  # Distributed in-memory cache
-  redis:
-    image: redis:4.0.6-alpine
-    read_only: true
-    volumes:
-      - redis:/data
-    user: redis
+    #    command: node tools/run.js # or, `node --inspect=0.0.0.0:9229 tools/run.js`
+    command: node --inspect=0.0.0.0:9229 tools/run.js
 
 volumes:
-  db:
-  redis:
   yarn:
